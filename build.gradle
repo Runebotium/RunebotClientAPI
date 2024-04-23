@@ -16,10 +16,17 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Runebotium/RunebotClientAPI")
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = System.getenv("USERNAME")
+                password = System.getenv("TOKEN")
             }
         }
+    }
+}
+
+/* Get Version Command we Can use with github actions */
+task('getVersion') {
+    doLast {
+        println RuneBotClientAPIVersion
     }
 }
 
