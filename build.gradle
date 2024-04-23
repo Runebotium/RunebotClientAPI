@@ -30,6 +30,13 @@ task('getVersion') {
     }
 }
 
+task('outputenv') {
+    doLast {
+        println System.getenv("USERNAME")
+        println System.getenv("TOKEN")
+    }
+}
+
 
 repositories {
     mavenLocal()
