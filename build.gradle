@@ -16,8 +16,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Runebotium/RunebotClientAPI_MVN")
             credentials {
-                username = "itsleigham@gmail.com"
-                password = "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"
+                username = ""
+                password = ""
             }
         }
     }
