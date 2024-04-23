@@ -16,8 +16,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Runebotium/RunebotClientAPI")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -32,8 +32,8 @@ task('getVersion') {
 
 task('outputenv') {
     doLast {
-        println System.getenv("USERNAME")
-        println System.getenv("TOKEN")
+        println System.getenv("GITHUB_ACTOR")
+        println System.getenv("GITHUB_TOKEN")
     }
 }
 
