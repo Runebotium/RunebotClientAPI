@@ -44,7 +44,7 @@ jobs:
 
       - name: Check if version is valid
         run: |
-          if [ -z "${{env.version}}" ]; then
+          if [ -z "${{env.VERSION}}" ]; then
             echo "Version not found."
             exit 1
           fi
