@@ -40,10 +40,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew fatJar
 
-      - name: Set output
-        run: echo "version=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' version.txt | head -n 1)" >> $GITHUB_OUTPUT
-        id:  version
-
       - name: Set output to env
         run: echo "version=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' version.txt | head -n 1)" >> $GITHUB_ENV
         id:  version
@@ -81,20 +77,13 @@ jobs:
           with:
             name: build-artifacts
 
-        - name: Check version file contents
-          run: cat version.txt
-
-        - name: Read version from file
-          id: version
-          run: echo "version=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' version.txt | head -n 1)" >> $GITHUB_OUTPUT
-
         # output the version
         - name: log the output version
           run: echo ${{ steps.version.outputs.version }}
         # check the version is valid
         - name: Check version is valid
           run: |
-            if [ -z "${{ steps.version.outputs.version }}" ]; then
+            if [ -z "$VERSION" ]; then
               echo "Version not found."
               exit 1
             fi
@@ -105,7 +94,7 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             WITH_V: true
-            CUSTOM_TAG: ${{ steps.version.outputs.version }}
+            CUSTOM_TAG: $VERSION
 
         - name : output the tag
           run: echo "tag=${{ steps.tag.outputs.new_tag }}" >> $GITHUB_OUTPUT
