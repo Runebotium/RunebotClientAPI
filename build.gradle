@@ -74,6 +74,12 @@ tasks.withType(JavaCompile) {
 
 assemble.dependsOn(FarJar)
 
+task('version') {
+    doLast {
+        println RuneBotClientAPIVersion
+    }
+}
+
 // Output environment variables for debugging
 task('outputenv') {
     doLast {
