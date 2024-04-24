@@ -48,59 +48,31 @@ jobs:
         run: echo ${{ steps.version.outputs.version }}
 
 
-      # upload build artifacts
-      - name: List build/libs contents
-        run: ls -R build/libs
+      # output the version
+      - name: log the output version
+        run: echo ${{ steps.version.outputs.version }}
+      # check the version is valid
+      - name: Check version is valid
+        run: |
+          if [ -z "$VERSION" ]; then
+            echo "Version not found."
+            exit 1
+          fi
 
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
+      - name: Bump version and push tag
+        id: tag
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          CUSTOM_TAG: $VERSION
+
+      - name : output the tag
+        run: echo "tag=${{ steps.tag.outputs.new_tag }}" >> $GITHUB_OUTPUT
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-         name: build-artifacts
-         path: |
-          build/libs/
-          version.txt
-
-  release:
-      needs: build
-      if: ${{ success() }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Read version output
-          run: echo "Version is $VERSION"
-
-        - name: Checkout code
-          uses: actions/checkout@v3
-
-        - name: Download build artifacts
-          uses: actions/download-artifact@v3
-          with:
-            name: build-artifacts
-
-        # output the version
-        - name: log the output version
-          run: echo ${{ steps.version.outputs.version }}
-        # check the version is valid
-        - name: Check version is valid
-          run: |
-            if [ -z "$VERSION" ]; then
-              echo "Version not found."
-              exit 1
-            fi
-
-        - name: Bump version and push tag
-          id: tag
-          uses: anothrNick/github-tag-action@1.67.0
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            WITH_V: true
-            CUSTOM_TAG: $VERSION
-
-        - name : output the tag
-          run: echo "tag=${{ steps.tag.outputs.new_tag }}" >> $GITHUB_OUTPUT
-
-        - name: Release
-          uses: softprops/action-gh-release@v1
-          with:
-            files: |
-              build/libs/*
-            tag_name: ${{ steps.tag.outputs.new_tag }}
+          files: |
+            build/libs/*
+          tag_name: ${{ steps.tag.outputs.new_tag }}
