@@ -23,6 +23,8 @@ publishing {
     }
 }
 
+version = RuneBotClientAPIVersion // Set the project version here
+
 /* Get Version Command we Can use with github actions */
 task('getVersion') {
     doLast {
@@ -36,7 +38,6 @@ task('outputenv') {
         println System.getenv("GITHUB_TOKEN")
     }
 }
-
 
 repositories {
     mavenLocal()
@@ -64,6 +65,7 @@ dependencies {
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
 
 }
+
 sourceSets {
     main {
         java {
@@ -73,7 +75,6 @@ sourceSets {
 }
 
 group = 'com.example'
-version = RuneBotClientAPIVersion
 sourceCompatibility = "11"
 
 task FarJar(type: Jar) {
@@ -90,4 +91,3 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 targetCompatibility = JavaVersion.VERSION_11
-
