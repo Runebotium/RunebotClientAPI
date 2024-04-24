@@ -30,7 +30,7 @@ jobs:
         run: ./gradlew fatJar
 
       - name: Build with Gradle
-        run: ./gradlew version > gradle_build_output.txt
+        run: ./gradlew version > version.txt
 
       - name: Set output
         run: echo "version=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' version.txt | head -n 1)" >> $GITHUB_OUTPUT
@@ -50,7 +50,7 @@ jobs:
          name: build-artifacts
          path: |
           build/libs/
-           version.txt
+          version.txt
 
   release:
       needs: build
