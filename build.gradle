@@ -82,6 +82,7 @@ task('version') {
 
 // Output environment variables for debugging
 task('outputenv') {
+    dependsOn('assemble')
     doLast {
         println "GITHUB_ACTOR: " + System.getenv("GITHUB_ACTOR")
         println "GITHUB_TOKEN: " + System.getenv("GITHUB_TOKEN")
