@@ -76,9 +76,12 @@ assemble.dependsOn(FatJar)
 
 task('version') {
     doLast {
-        println RuneBotClientAPIVersion
+        def version = RuneBotClientAPIVersion
+        new File('version.txt').text = version
+        println "Version $version has been written to version.txt"
     }
 }
+
 
 // Output environment variables for debugging
 task('outputenv') {
