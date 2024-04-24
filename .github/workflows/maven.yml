@@ -27,6 +27,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
+        run: ./gradlew fatJar
+
+      - name: Build with Gradle
         run: ./gradlew version > gradle_build_output.txt
 
       - name: Set output
