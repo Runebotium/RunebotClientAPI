@@ -23,21 +23,7 @@ publishing {
     }
 }
 
-version = RuneBotClientAPIVersion // Set the project version here
-
-/* Get Version Command we Can use with github actions */
-task('getVersion') {
-    doLast {
-        println RuneBotClientAPIVersion
-    }
-}
-
-task('outputenv') {
-    doLast {
-        println System.getenv("GITHUB_ACTOR")
-        println System.getenv("GITHUB_TOKEN")
-    }
-}
+version = RuneBotClientAPIVersion
 
 repositories {
     mavenLocal()
@@ -59,11 +45,7 @@ dependencies {
     implementation 'org.json:json:20230227'
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.44'
     implementation 'org.benf:cfr:0.151'
-
-    // org.java-websocket
-
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
-
 }
 
 sourceSets {
@@ -83,11 +65,19 @@ task FarJar(type: Jar) {
     }
     getArchiveBaseName().set("runebotclientapi")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+    from sourceSets.main.output
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-targetCompatibility = JavaVersion.VERSION_11
+
+assemble.dependsOn(FarJar)
+
+// Output environment variables for debugging
+task('outputenv') {
+    doLast {
+        println "GITHUB_ACTOR: " + System.getenv("GITHUB_ACTOR")
+        println "GITHUB_TOKEN: " + System.getenv("GITHUB_TOKEN")
+    }
+}
