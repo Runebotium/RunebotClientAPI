@@ -26,11 +26,19 @@ jobs:
       - name: Make Gradle Wrapper Executable
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew fatJar
+      # lets check our version before we build
 
       - name: Build with Gradle
         run: ./gradlew version > version.txt
+
+      - name: Check version
+        run: cat version.txt
+
+      - name: version not blank
+        run: if [ -s version.txt ]; then echo "version.txt is not empty"; else echo "version.txt is empty"; exit 1; fi
+
+      - name: Build with Gradle
+        run: ./gradlew fatJar
 
       - name: Set output
         run: echo "version=$(grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' version.txt | head -n 1)" >> $GITHUB_OUTPUT
