@@ -27,7 +27,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Get Version
-        run: ./gradlew version > version.txt
+        run: ./gradlew version
 
       - name: Check version file contents
         run: cat version.txt
