@@ -41,8 +41,10 @@ jobs:
         run: ./gradlew fatJar
 
       - name: Set output to env
-        run: cat version.txt >> $GITHUB_ENV
-        id:  version
+        run: echo "VERSION=$(cat version.txt | tr -d '[:space:]')" >> $GITHUB_ENV
+        id: version
+
+
       - name: Read version output
         run: echo "Version is ${{ env.VERSION }}"
 
