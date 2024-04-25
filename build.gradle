@@ -13,6 +13,14 @@ publishing {
     }
     repositories {
         maven {
+            name = "reposiliteRepository"
+            url = "https://repo.leigham.uk/releases/runebotclientapi"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+        maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Runebotium/RunebotClientAPI_MVN")
             credentials {

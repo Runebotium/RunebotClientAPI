@@ -20,6 +20,7 @@ public class Inventory {
     static List<Widget> inventoryItems = new ArrayList<>();
 
     public static ItemQuery search() {
+        reloadInventory();
         return new ItemQuery(inventoryItems);
     }
 
