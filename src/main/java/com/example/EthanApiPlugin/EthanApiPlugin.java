@@ -5,7 +5,6 @@ import com.example.EthanApiPlugin.Collections.query.QuickPrayer;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.inject.Singleton;
 import lombok.SneakyThrows;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -62,7 +61,6 @@ import java.util.stream.Collectors;
 
 import static net.runelite.api.Varbits.QUICK_PRAYER;
 
-@Singleton
 @PluginDescriptor(
         name = "<html><font color=#86C43F>[RB]</font> Api</html>",
         description = "",

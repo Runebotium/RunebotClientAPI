@@ -1,6 +1,5 @@
 package com.example.RuneBotApi.LocalPlayer;
 
-import com.example.EthanApiPlugin.EthanApiPlugin;
 import net.runelite.api.Client;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.RuneLite;
@@ -8,7 +7,7 @@ import net.runelite.client.RuneLite;
 import java.util.Set;
 
 public final class LocationInformation {
-    static Client client = EthanApiPlugin.getClient();
+    static Client client = RuneLite.getInjector().getInstance(Client.class);
 
     public static int getMapSquareId()
     {

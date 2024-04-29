@@ -768,11 +768,6 @@ public class EquipmentItemWidget implements Widget {
     }
 
     @Override
-    public void setOnScrollWheelListener(Object... objects) {
-
-    }
-
-    @Override
     public Widget getDragParent() {
         return null;
     }
@@ -787,7 +782,10 @@ public class EquipmentItemWidget implements Widget {
         return new Object[0];
     }
 
+    @Override
+    public void setOnScrollWheelListener(Object ...args){
 
+    }
 
 
 

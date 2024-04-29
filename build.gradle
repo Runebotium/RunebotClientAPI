@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-def RuneBotClientAPIVersion = '0.0.1'
+def RuneBotClientAPIVersion = '0.0.8-beta'
 
 publishing {
     publications {
@@ -68,7 +68,7 @@ sourceSets {
 }
 
 group = 'com.example'
-version = '0.0.1'
+version = RuneBotClientAPIVersion
 sourceCompatibility = "11"
 
 task FarJar(type: Jar) {

@@ -1,15 +1,14 @@
 package com.example.RuneBotApi.LocalPlayer;
 
-import com.example.EthanApiPlugin.EthanApiPlugin;
 import net.runelite.api.Client;
 import net.runelite.api.Skill;
 import net.runelite.client.RuneLite;
 import net.runelite.client.plugins.Plugin;
 
 
-public final class StatInformation {
+public final class StatInformation extends Plugin {
 
-    static Client client = EthanApiPlugin.getClient();
+    static Client client = RuneLite.getInjector().getInstance(Client.class);
 
     public static int getLevel(Skill skillName, StatType type)
     {
