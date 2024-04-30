@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-def RuneBotClientAPIVersion = '0.0.8-beta'
+def RuneBotClientAPIVersion = '0.0.10-beta'
 
 publishing {
     publications {
@@ -15,7 +15,7 @@ publishing {
     repositories {
         maven {
             name = "reposiliteRepository"
-            url = "https://repo.leigham.uk/snapshots/runebotclientapi"
+            url = "https://repo.leigham.uk/releases/runebotclientapi"
             credentials(PasswordCredentials)
             authentication {
                 basic(BasicAuthentication)
@@ -50,12 +50,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
     testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
-    implementation 'org.json:json:20230227'
+
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.44'
     implementation 'org.benf:cfr:0.151'
 
     // org.java-websocket
-
+    implementation 'org.json:json:20230227'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
 
 }

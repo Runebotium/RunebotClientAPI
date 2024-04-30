@@ -1,6 +1,5 @@
 package com.example.PacketUtils;
 
-import com.example.testerplugin.testerpluginss;
 import com.google.archivepatcher.applier.FileByFileV1DeltaApplier;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -36,11 +35,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import javax.swing.*;
-import java.util.Optional;
 
 @Slf4j
 @Singleton
@@ -95,9 +89,7 @@ public class PacketUtilsPlugin extends Plugin {
     @Override
     @SneakyThrows
     public void startUp() {
-        if(!testerpluginss.checkOther()){
-            return;
-        }
+
         staticClient = client;
         if (client.getRevision() != CLIENT_REV) {
             SwingUtilities.invokeLater(() ->
