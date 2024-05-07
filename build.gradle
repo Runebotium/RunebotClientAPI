@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-def RuneBotClientAPIVersion = '0.0.1'
+def RuneBotClientAPIVersion = '0.0.6-beta'
 
 publishing {
     publications {
@@ -11,27 +11,19 @@ publishing {
             from components.java
         }
     }
-
     repositories {
         maven {
-            name = "reposiliteRepository"
-            url = "https://repo.leigham.uk/snapshots/runebotclientapi"
-            credentials(PasswordCredentials)
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-        maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Runebotium/RunebotClientAPI_MVN")
+            url = uri("https://maven.pkg.github.com/Runebotium/RunebotClientAPI")
             credentials {
-                username = ""
-                password = ""
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
 }
 
+version = RuneBotClientAPIVersion
 
 repositories {
     mavenLocal()
@@ -53,12 +45,9 @@ dependencies {
     implementation 'org.json:json:20230227'
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.44'
     implementation 'org.benf:cfr:0.151'
-
-    // org.java-websocket
-
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
-
 }
+
 sourceSets {
     main {
         java {
@@ -68,21 +57,37 @@ sourceSets {
 }
 
 group = 'com.example'
-version = '0.0.1'
 sourceCompatibility = "11"
 
-task FarJar(type: Jar) {
+task FatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.example.Main'
     }
     getArchiveBaseName().set("runebotclientapi")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+    from sourceSets.main.output
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-targetCompatibility = JavaVersion.VERSION_11
 
+assemble.dependsOn(FatJar)
+
+task('version') {
+    doLast {
+        def version = RuneBotClientAPIVersion
+        new File('version.txt').text = version
+        println "Version $version has been written to version.txt"
+    }
+}
+
+
+// Output environment variables for debugging
+task('outputenv') {
+    dependsOn('assemble')
+    doLast {
+        println "GITHUB_ACTOR: " + System.getenv("GITHUB_ACTOR")
+        println "GITHUB_TOKEN: " + System.getenv("GITHUB_TOKEN")
+    }
+}
