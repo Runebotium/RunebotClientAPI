@@ -7,12 +7,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.RuneLite;
 import net.runelite.client.RuneLiteProperties;
-import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -27,6 +24,7 @@ import javax.swing.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -36,15 +34,10 @@ import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
-import javax.swing.*;
-import java.util.Optional;
-
 @Slf4j
 @Singleton
 @PluginDescriptor(
-        name = "<html><font color=#86C43F>[RB]</font> Packet Utils</html>",
+        name = "Packet Utils",
         description = "Packet Utils for Plugins",
         enabledByDefault = true,
         tags = {"ethan"}
@@ -55,27 +48,12 @@ public class PacketUtilsPlugin extends Plugin {
     @Inject
     Client client;
     static Client staticClient;
-    @Inject
-    PacketReflection packetReflection;
-    @Inject
-    ClientThread thread;
     public static Method addNodeMethod;
     public static boolean usingClientAddNode = false;
-    public static final int CLIENT_REV = 221;
-    private static boolean loaded = false;
+    public static final int CLIENT_REV = 222;
+    private static String loadedConfigName = "";
     @Inject
     private PluginManager pluginManager;
-
-    @Subscribe
-    public void onGameStateChanged(GameStateChanged event) {
-        if (event.getGameState() == GameState.LOGGED_IN) {
-            loaded = packetReflection.LoadPackets();
-        }
-    }
-
-    public boolean isLoaded() {
-        return loaded;
-    }
 
     @Provides
     public PacketUtilsConfig getConfig(ConfigManager configManager) {
@@ -109,28 +87,26 @@ public class PacketUtilsPlugin extends Plugin {
             });
             return;
         }
-        Thread updateThread = new Thread(() ->
-        {
-            setupRuneliteUpdateHandling(RuneLiteProperties.getVersion());
-            cleanup();
-        });
-        updateThread.start();
-        thread.invoke(() ->
-        {
-            if (client.getGameState() != null && client.getGameState() == GameState.LOGGED_IN) {
-                loaded = packetReflection.LoadPackets();
+        //setupNeverlog();
+        int feature = Runtime.version().feature();
+        if (feature != 11) {
+            for (int i = 0; i < 10; i++) {
+                log.error("ETHAN VANN PLUGINS LOADED ON JAVA != 11 THIS IS NOT SUPPORTED");
+                log.error("DEVELOPERS SHOULD IGNORE BUG REPORTS CONTAINING THIS LINE UNTIL THIS ISSUE IS RESOLVED");
             }
-        });
+        } else {
+            log.info("Ethan Vann Plugins loaded on Java 11");
+        }
+        setupRuneliteUpdateHandling(RuneLiteProperties.getVersion());
+        cleanup();
         SwingUtilities.invokeLater(() ->
         {
             for (Plugin plugin : pluginManager.getPlugins()) {
-                if (plugin.getName().equals("EthanApiPlugin") || plugin.getName().contains("Banker/Seller")) {
+                if (plugin.getName().equals("EthanApiPlugin")) {
                     if (pluginManager.isPluginEnabled(plugin)) {
                         continue;
                     }
                     try {
-                        pluginManager.setPluginEnabled(plugin, true);
-                        pluginManager.startPlugin(plugin);
                         pluginManager.setPluginEnabled(plugin, true);
                         pluginManager.startPlugin(plugin);
                     } catch (PluginInstantiationException e) {
@@ -142,7 +118,33 @@ public class PacketUtilsPlugin extends Plugin {
     }
 
     @SneakyThrows
+    public static void setupNeverlog() {
+        staticClient.setIdleTimeout(42069);
+        for (Field declaredField : staticClient.getClass().getDeclaredFields()) {
+            if (declaredField.getType() == int.class && Modifier.isStatic(declaredField.getModifiers())) {
+                declaredField.setAccessible(true);
+                int value = declaredField.getInt(null);
+                if (value != 42069) {
+                    declaredField.setAccessible(false);
+                    continue;
+                }
+                System.out.println("found idle ticks field: " + declaredField.getName());
+                declaredField.setInt(null, Integer.MAX_VALUE);
+                declaredField.setAccessible(false);
+            }
+        }
+    }
+
+    @SneakyThrows
     public void cleanup() {
+        if (!loadedConfigName.equals(makeString())) {
+            for (int i = 0; i < 10; i++) {
+                log.error("ETHAN VANN PLUGINS LOADED WITH INCORRECT CONFIG DATA THIS IS NOT SUPPORTED");
+                log.error("DEVELOPERS SHOULD IGNORE BUG REPORTS CONTAINING THIS LINE UNTIL THIS ISSUE IS RESOLVED");
+            }
+        } else {
+            log.info("config loaded from correct path");
+        }
         Path codeSource = RuneLite.RUNELITE_DIR.toPath().resolve("PacketUtils");
         List<Path> toDelete = new ArrayList<>();
         toDelete.add(codeSource.resolve("vanilla.jar"));
@@ -157,16 +159,19 @@ public class PacketUtilsPlugin extends Plugin {
     @SneakyThrows
     public void setupRuneliteUpdateHandling(String version) {
         Path codeSource = RuneLite.RUNELITE_DIR.toPath().resolve("PacketUtils");
-        if (Files.exists(codeSource.resolve(version+"-"+client.getRevision() + ".txt"))) {
-            List<String> lines = Files.readAllLines(codeSource.resolve(version+"-"+client.getRevision() + ".txt"));
+        if (Files.exists(codeSource.resolve(version + "-" + client.getRevision() + ".txt"))) {
+            Path f = codeSource.resolve(version + "-" + client.getRevision() + ".txt");
+            List<String> lines = Files.readAllLines(f);
+            loadedConfigName = f.getFileName().toString();
+            System.out.println("config name: " + loadedConfigName);
             if (lines.size() < 2) {
                 return;
             }
             usingClientAddNode = Boolean.parseBoolean(lines.get(0));
             if (usingClientAddNode) {
-                System.out.println("loaded addNode config from file");
-                System.out.println("usingClientAddNode: " + usingClientAddNode);
-                System.out.println("addNodeMethod: " + "N/A");
+                log.info("loaded addNode config from file");
+                log.info("usingClientAddNode: " + usingClientAddNode);
+                log.info("addNodeMethod: " + "N/A");
                 return;
             }
             String[] split = lines.get(1).split("\\.");
@@ -176,9 +181,9 @@ public class PacketUtilsPlugin extends Plugin {
                     addNodeMethod = declaredMethod;
                 }
             }
-            System.out.println("loaded addNode config from file");
-            System.out.println("usingClientAddNode: " + usingClientAddNode);
-            System.out.println("addNodeMethod: " + addNodeMethod);
+            log.info("loaded addNode config from file");
+            log.info("usingClientAddNode: " + usingClientAddNode);
+            log.info("addNodeMethod: " + addNodeMethod);
             return;
         }
         String doActionClassName = "";
@@ -187,16 +192,16 @@ public class PacketUtilsPlugin extends Plugin {
         classes.setAccessible(true);
         ClassLoader classLoader = client.getClass().getClassLoader();
         Vector<Class<?>> classesVector = (Vector<Class<?>>) classes.get(classLoader);
-        Class<?>[] params = new Class[]{int.class, int.class, int.class, int.class, int.class, String.class, String.class, int.class, int.class};
+        Class<?>[] params = new Class[]{int.class, int.class, int.class, int.class, int.class, int.class, String.class, String.class, int.class, int.class};
         for (Class<?> aClass : classesVector) {
             for (Method declaredMethod : aClass.getDeclaredMethods()) {
-                if (declaredMethod.getParameterCount() != 10) {
+                if (declaredMethod.getParameterCount() != 11) {
                     continue;
                 }
                 if (declaredMethod.getReturnType() != void.class) {
                     continue;
                 }
-                if (!Arrays.equals(Arrays.copyOfRange(declaredMethod.getParameterTypes(), 0, 9), params)) {
+                if (!Arrays.equals(Arrays.copyOfRange(declaredMethod.getParameterTypes(), 0, 10), params)) {
                     continue;
                 }
                 doActionClassName = aClass.getSimpleName();
@@ -205,6 +210,8 @@ public class PacketUtilsPlugin extends Plugin {
         }
         final String doActionFinalClassName = doActionClassName;
         final String doActionFinalMethodName = doActionMethodName;
+        System.out.println(doActionFinalClassName);
+        System.out.println(doActionFinalMethodName);
         classes.setAccessible(false);
         URL rlConfigURL = new URL("https://static.runelite.net/jav_config.ws");
         if (!codeSource.toFile().isDirectory()) {
@@ -214,12 +221,13 @@ public class PacketUtilsPlugin extends Plugin {
         Path patchedOutputPath = codeSource.resolve("patched.jar");
         Path doActionOutputPath = codeSource.resolve("doAction.class");
         Path decompilationOutputPath = codeSource.resolve("decompiled.txt");
+        System.out.println("Downloading vanilla client");
         downloadVanillaJar(vanillaOutputPath, rlConfigURL);
         File vanilla = vanillaOutputPath.toFile();
         if (vanilla.exists()) {
-            System.out.println("Vanilla jar exists");
+            log.info("Vanilla jar exists");
         } else {
-            System.out.println("Vanilla jar does not exist");
+            log.info("Vanilla jar does not exist");
         }
         OutputStream patchedOutputStream = Files.newOutputStream(patchedOutputPath);
         InputStream patch = ClientLoader.class.getResourceAsStream("/client.patch");
@@ -262,6 +270,9 @@ public class PacketUtilsPlugin extends Plugin {
             }
         }
         reader.close();
+        for (String methodCall : methodCalls) {
+            System.out.println(methodCall);
+        }
         String mostUsedMethod = methodCalls.stream()
                 .collect(Collectors.groupingBy(str -> str, Collectors.counting()))
                 .entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -279,12 +290,12 @@ public class PacketUtilsPlugin extends Plugin {
         }
         for (String line : lines) {
             if (line.contains(mostUsedMethod)) {
-                System.out.println("found addNode method call example " + line.trim());
-                StringBuilder stringOutput = new StringBuilder();
-                stringOutput.append(usingClientAddNode);
-                stringOutput.append("\n");
-                stringOutput.append(mostUsedMethod);
-                Files.write(Files.createFile(codeSource.resolve(version+"-"+client.getRevision() + ".txt")), stringOutput.toString().getBytes(StandardCharsets.UTF_8));
+                log.info("found addNode method call example " + line.trim());
+                String stringOutput = usingClientAddNode +
+                        "\n" +
+                        mostUsedMethod;
+                Path config = Files.write(Files.createFile(codeSource.resolve(version + "-" + client.getRevision() + ".txt")), stringOutput.getBytes(StandardCharsets.UTF_8));
+                loadedConfigName = config.getFileName().toString();
                 break;
             }
         }
@@ -299,7 +310,7 @@ public class PacketUtilsPlugin extends Plugin {
             }
             if (line.contains("runelite.gamepack")) {
                 URL clientURL = new URL(line.split("=")[1]);
-                System.out.println("Downloading vanilla client from " + clientURL);
+                log.info("Downloading vanilla client from " + clientURL);
                 try (InputStream clientStream = clientURL.openStream()) {
                     Files.copy(clientStream, vanillaOutputPath, StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -311,7 +322,6 @@ public class PacketUtilsPlugin extends Plugin {
     @Override
     public void shutDown() {
         log.info("Shutdown");
-        loaded = false;
     }
 
     @Inject
@@ -327,5 +337,9 @@ public class PacketUtilsPlugin extends Plugin {
                 }
             });
         }
+    }
+
+    public String makeString() {
+        return RuneLiteProperties.getVersion() + "-" + client.getRevision() + ".txt";
     }
 }
