@@ -3,6 +3,7 @@ package com.example.PacketUtils;
 import com.example.Packets.BufferMethods;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.client.RuneLite;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
@@ -27,6 +28,10 @@ public class PacketReflection {
     @Inject
     Client clientInstance;
     public static Client client = null;
+
+    public static Client getClient(){
+        return RuneLite.getInjector().getInstance(Client.class);
+    }
 
     public boolean LoadPackets() {
         try {
