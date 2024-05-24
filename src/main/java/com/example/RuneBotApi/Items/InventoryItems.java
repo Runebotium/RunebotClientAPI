@@ -1,5 +1,6 @@
 package com.example.RuneBotApi.Items;
 
+import com.example.EthanApiPlugin.EthanApiPlugin;
 import com.example.InteractionApi.InventoryInteraction;
 import com.example.RuneBotApi.RBConstants;
 import net.runelite.api.InventoryID;
@@ -10,11 +11,8 @@ import net.runelite.api.ItemID;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.example.PacketUtils.PacketReflection.client;
-
-
 public class InventoryItems {
-    private static final ItemContainer container = client.getItemContainer(InventoryID.INVENTORY);
+    private static final ItemContainer container = EthanApiPlugin.getClient().getItemContainer(InventoryID.INVENTORY);
 
     /**
      * for clearing up inventory space for looting. Will drop brews with the lowest priority at the expense
