@@ -45,6 +45,11 @@ public class ItemQuery {
         return this;
     }
 
+    public ItemQuery nameContainsInsensitive(String name) {
+        items = items.stream().filter(item -> item.getName().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
+        return this;
+    }
+
     public ItemQuery withSet(Set<Integer> ids) {
         items = items.stream()
                 .filter(item -> ids.contains(item.getItemId()))
