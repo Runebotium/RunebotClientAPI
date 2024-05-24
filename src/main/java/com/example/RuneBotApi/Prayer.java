@@ -59,16 +59,15 @@ public enum Prayer {
         return net.runelite.api.Prayer.PROTECT_ITEM;
     }
 
-
     Prayer(int varbit, double drainRate, WidgetInfoExt widgetInfo) {
         this.varbit = varbit;
         this.drainRate = drainRate;
         this.widgetInfo = widgetInfo;
     }
 
-	public static int getPrayerWidgetId(net.runelite.api.Prayer prayer)
-	{
-		return Prayer.valueOf(prayer.name()).getWidgetInfo().getId();
-	}
+    public static int getPrayerWidgetId(net.runelite.api.Prayer prayer)
+    {
+        return Prayer.valueOf(prayer.name()).getWidgetInfo().getId();
+    }
 
 }

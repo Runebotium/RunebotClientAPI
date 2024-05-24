@@ -11,10 +11,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.Text;
 import net.runelite.client.util.WildcardMatcher;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -94,7 +91,7 @@ public class TileItemQuery {
         return this;
     }
 
-    public TileItemQuery stackAboveXValue(int value){
+    public TileItemQuery stackAboveXValue(int value) {
         tileItems = tileItems.stream().filter(item -> item.getTileItem().getQuantity() * itemManager.getItemPrice(item.getTileItem().getId()) > value).collect(Collectors.toList());
         return this;
     }
@@ -179,6 +176,11 @@ public class TileItemQuery {
         tileItems = tileItems.stream().filter(tileItem -> tileItem.getLocation().distanceTo(point) <= distance).collect(Collectors.toList());
         return this;
     }
+    public TileItemQuery alchValueAbove(int value){
+        tileItems = tileItems.stream().filter(tileItem -> itemManager.getItemComposition(tileItem.getTileItem().getId()).getHaPrice() > value).collect(Collectors.toList());
+        return this;
+    }
+
     public Optional<ETileItem> nearestToPlayer() {
         return nearestToPoint(client.getLocalPlayer().getWorldLocation());
     }
@@ -194,5 +196,23 @@ public class TileItemQuery {
     public boolean isNoted(ETileItem item) {
         ItemComposition itemComposition = EthanApiPlugin.itemDefs.get(item.tileItem.getId());
         return itemComposition.getNote() != -1;
+    }
+
+    public Optional<ETileItem> nearestByPath() {
+        HashSet<WorldPoint> tiles = new HashSet<>();
+        HashMap<WorldPoint, ETileItem> map = new HashMap<>();
+        WorldPoint playerLoc = client.getLocalPlayer().getWorldLocation();
+        for (var t : tileItems) {
+            if (playerLoc.equals(t.getLocation())) {
+                return Optional.of(t);
+            }
+            map.put(t.getLocation(), t);
+            tiles.add(t.getLocation());
+        }
+        List<WorldPoint> path = EthanApiPlugin.pathToGoalSetFromPlayerNoCustomTiles(new HashSet<>(tiles));
+        if (path == null || path.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(map.get(path.get(path.size() - 1)));
     }
 }

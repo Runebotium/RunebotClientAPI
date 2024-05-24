@@ -36,6 +36,7 @@ import net.runelite.api.widgets.WidgetInfo;
  * For a more direct group-child widget mapping, use the
  * {@link WidgetInfo} enum class.
  */
+
 public final class WidgetID
 {
     public static final int FAIRY_RING_PANEL_GROUP_ID = 381;
@@ -1164,7 +1165,7 @@ public final class WidgetID
         static final int TELEKINETIC_GRAB = 27;
         static final int FIRE_BOLT = 28;
         static final int FALADOR_TELEPORT = 29;
-        static final int CRUMBLE_UNDEAD = 30;
+        static final int CRUMBLE_UNDEAD = 20;
         static final int TELEPORT_TO_HOUSE = 31;
         static final int WIND_BLAST = 32;
         static final int SUPERHEAT_ITEM = 33;

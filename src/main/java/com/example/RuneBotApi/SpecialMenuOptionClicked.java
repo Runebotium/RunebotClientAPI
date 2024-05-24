@@ -100,7 +100,7 @@ public class SpecialMenuOptionClicked {
 
     public void setMenuAction(MenuAction menuAction)
     {
-        menuEntry.setIdentifier(menuAction.getId());
+        menuEntry.setType(menuAction);
     }
 
     /**
