@@ -20,6 +20,14 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
+        maven {
+            name = "reposiliteRepository"
+            url = "https://repo.leigham.uk/releases/runebotclientapi"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
 }
 
