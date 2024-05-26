@@ -77,3 +77,5 @@ jobs:
         run: ./gradlew publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSILITE_USERNAME: ${{ env.REPOSILITE_USERNAME }}
+          REPOSILITE_PASSWORD: ${{ env.REPOSILITE_PASSWORD }}
