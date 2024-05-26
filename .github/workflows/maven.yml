@@ -71,11 +71,17 @@ jobs:
             build/libs/*
           tag_name: ${{ steps.tag.outputs.new_tag }}
 
+      - name: Output Our REPO USER AND PASS FOR TESTING
+        run: echo "REPO_USER=${{ secrets.REPO_USER }}" >> $GITHUB_OUTPUT
+
+      - name: Output Our REPO USER AND PASS FOR TESTING
+        run: echo "REPO_PASS=${{ secrets.REPO_PASS }}" >> $GITHUB_OUTPUT
+
       # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
       - name: Publish to GitHub Packages
         run: ./gradlew publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSILITE_USERNAME: ${{ env.REPOSILITE_USERNAME }}
-          REPOSILITE_PASSWORD: ${{ env.REPOSILITE_PASSWORD }}
+          MAVEN_NAME: ${{ secrets.REPO_USER }} # token name
+          MAVEN_SECRET: ${{ secrets.REPO_PASS }} # token secret (password)
