@@ -1,6 +1,7 @@
 package com.example.EthanApiPlugin.Collections;
 
 import com.example.EthanApiPlugin.Collections.query.NPCQuery;
+import com.google.inject.Singleton;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.client.RuneLite;
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * A utility class for handling and querying NPCs in the RuneLite client.
  */
+
 public class NPCs {
     private static final Client client = RuneLite.getInjector().getInstance(Client.class);
     private static final List<NPC> npcList = new ArrayList<>();
@@ -23,7 +25,7 @@ public class NPCs {
      */
     public static NPCQuery search() {
         int currentTick = client.getTickCount();
-        if (lastUpdate != currentTick) {
+        if (lastUpdate != currentTick || npcList.isEmpty()) {
             updateNPCList();
             lastUpdate = currentTick;
         }
