@@ -80,8 +80,6 @@ jobs:
       # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
       - name: Publish to GitHub Packages
-        run: ./gradlew publish
+        run: ./gradlew  publish -PreposiliteRepositoryUsername={secrets.REPO_USER} -PreposiliteRepositoryPassword={secrets.REPO_PASS}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_USER: ${{ secrets.REPO_USER }} # token name
-          REPO_PASS: ${{ secrets.REPO_PASS }} # token secret (password)
