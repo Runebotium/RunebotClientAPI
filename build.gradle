@@ -23,7 +23,10 @@ publishing {
         maven {
             name = "reposiliteRepository"
             url = "https://repo.leigham.uk/releases/runebotclientapi"
-            credentials(PasswordCredentials)
+            credentials {
+                username = System.getenv("REPOSILITE_USERNAME")
+                password = System.getenv("REPOSILITE_PASSWORD")
+            }
             authentication {
                 basic(BasicAuthentication)
             }
