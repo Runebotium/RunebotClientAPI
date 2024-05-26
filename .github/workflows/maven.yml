@@ -83,5 +83,5 @@ jobs:
         run: ./gradlew publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAVEN_NAME: ${{ secrets.REPO_USER }} # token name
-          MAVEN_SECRET: ${{ secrets.REPO_PASS }} # token secret (password)
+          REPO_USER: ${{ secrets.REPO_USER }} # token name
+          REPO_PASS: ${{ secrets.REPO_PASS }} # token secret (password)

@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-def RuneBotClientAPIVersion = '0.1.26'
+def RuneBotClientAPIVersion = '0.1.27'
 
 publishing {
     publications {
@@ -24,8 +24,8 @@ publishing {
             name = "reposiliteRepository"
             url = "https://repo.leigham.uk/releases/runebotclientapi"
             credentials {
-                username = System.getenv("REPOSILITE_USERNAME")
-                password = System.getenv("REPOSILITE_PASSWORD")
+                username = System.getenv("REPO_USER")
+                password = System.getenv("REPO_PASS")
             }
             authentication {
                 basic(BasicAuthentication)
