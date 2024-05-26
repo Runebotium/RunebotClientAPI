@@ -3,30 +3,54 @@ package com.example.EthanApiPlugin.Collections;
 import com.example.EthanApiPlugin.Collections.query.NPCQuery;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
-import net.runelite.api.events.GameTick;
 import net.runelite.client.RuneLite;
-import net.runelite.client.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A utility class for handling and querying NPCs in the RuneLite client.
+ */
 public class NPCs {
-    static Client client = RuneLite.getInjector().getInstance(Client.class);
+    private static final Client client = RuneLite.getInjector().getInstance(Client.class);
     private static final List<NPC> npcList = new ArrayList<>();
+    private static int lastUpdate = -1;
 
+    /**
+     * Searches and retrieves an NPCQuery object containing a list of NPCs in the current game tick.
+     *
+     * @return an NPCQuery object with the list of NPCs
+     */
     public static NPCQuery search() {
+        int currentTick = client.getTickCount();
+        if (lastUpdate != currentTick) {
+            updateNPCList();
+            lastUpdate = currentTick;
+        }
         return new NPCQuery(npcList);
     }
 
-    @Subscribe(priority = 10000)
-    public void onGameTick(GameTick e) {
+    /**
+     * Updates the npcList with the current NPCs from the client.
+     * This method filters out invalid NPCs and only includes those with valid IDs.
+     */
+    private static void updateNPCList() {
         npcList.clear();
         for (NPC npc : client.getNpcs()) {
-            if (npc == null)
-                continue;
-            if (npc.getId() == -1)
-                continue;
-            npcList.add(npc);
+            if (isValidNPC(npc)) {
+                npcList.add(npc);
+            }
         }
+    }
+
+    /**
+     * Checks if an NPC is valid.
+     * An NPC is considered valid if it is not null and its ID is not -1.
+     *
+     * @param npc the NPC to check
+     * @return true if the NPC is valid, false otherwise
+     */
+    private static boolean isValidNPC(NPC npc) {
+        return npc != null && npc.getId() != -1;
     }
 }
