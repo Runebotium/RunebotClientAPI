@@ -56,6 +56,9 @@ public class EquipmentItemWidget implements Widget {
     }
 
     @Override
+    public void clearActions(){};
+
+    @Override
     public int getContentType() {
         return 0;
     }
@@ -768,7 +771,7 @@ public class EquipmentItemWidget implements Widget {
     }
 
     @Override
-    public void setOnScrollWheelListener(Object... objects) {
+    public void setOnScrollWheelListener(Object... args) {
 
     }
 
@@ -786,11 +789,6 @@ public class EquipmentItemWidget implements Widget {
     public Object[] getOnVarTransmitListener() {
         return new Object[0];
     }
-
-
-
-
-
 
     @Override
     public void setOnVarTransmitListener(Object... args) {

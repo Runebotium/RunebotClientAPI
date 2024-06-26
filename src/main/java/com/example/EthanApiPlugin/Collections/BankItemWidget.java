@@ -15,12 +15,14 @@ public class BankItemWidget implements Widget {
     String name;
     int itemid;
     int quantity;
-    BankItemWidget(String name,int itemid,int quantity,int index){
+
+    BankItemWidget(String name, int itemid, int quantity, int index) {
         this.name = name;
         this.itemid = itemid;
         this.quantity = quantity;
         this.index = index;
     }
+
     @Override
     public int getId() {
         return WidgetInfo.BANK_ITEM_CONTAINER.getPackedId();
@@ -35,6 +37,9 @@ public class BankItemWidget implements Widget {
     public void setType(int type) {
 
     }
+
+    @Override
+    public void clearActions(){};
 
     @Override
     public int getContentType() {
@@ -198,7 +203,7 @@ public class BankItemWidget implements Widget {
     }
 
     @Override
-    public Widget setRotationX( int modelX) {
+    public Widget setRotationX(int modelX) {
         return null;
     }
 
@@ -208,7 +213,7 @@ public class BankItemWidget implements Widget {
     }
 
     @Override
-    public Widget setRotationY( int modelY) {
+    public Widget setRotationY(int modelY) {
         return null;
     }
 
@@ -477,6 +482,7 @@ public class BankItemWidget implements Widget {
         actions[9] = "Examine";
         return actions;
     }
+
 
     @Override
     public Widget createChild(int index, int type) {
@@ -794,7 +800,7 @@ public class BankItemWidget implements Widget {
     }
 
     @Override
-    public void setOnScrollWheelListener(Object... objects) {
+    public void setOnScrollWheelListener(Object... args) {
 
     }
 
@@ -812,10 +818,6 @@ public class BankItemWidget implements Widget {
     public Object[] getOnVarTransmitListener() {
         return new Object[0];
     }
-
-
-
-
 
     @Override
     public void setOnVarTransmitListener(Object... args) {
