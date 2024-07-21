@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Singleton
 @PluginDescriptor(
         name = "<html><font color=#86C43F>[RB]</font> Packet Utils</html>",
-        description = "Packet Utils",
+        description = "Packet Utils for Plugins",
         enabledByDefault = true,
         tags = {"ethan"}
 )
