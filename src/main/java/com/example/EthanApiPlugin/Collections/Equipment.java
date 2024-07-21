@@ -1,18 +1,12 @@
 package com.example.EthanApiPlugin.Collections;
 
 import com.example.EthanApiPlugin.Collections.query.EquipmentItemQuery;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import lombok.SneakyThrows;
 import net.runelite.api.Client;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
-import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.RuneLite;
-import net.runelite.client.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +17,10 @@ public class Equipment {
     static List<EquipmentItemWidget> equipment = new ArrayList<>();
     static HashMap<Integer, Integer> equipmentSlotWidgetMapping = new HashMap<>();
     static HashMap<Integer, Integer> mappingToIterableIntegers = new HashMap<>();
+    static int lastUpdateTick = 0;
 
     static {
         equipmentSlotWidgetMapping.put(0, 15);
-        equipmentSlotWidgetMapping.put(-1, 27);
         equipmentSlotWidgetMapping.put(1, 16);
         equipmentSlotWidgetMapping.put(2, 17);
         equipmentSlotWidgetMapping.put(3, 18);
@@ -53,65 +47,17 @@ public class Equipment {
     }
 
     public static EquipmentItemQuery search() {
-        return new EquipmentItemQuery(equipment);
-    }
-
-    public static void RetryCollection(){
-		equipment.clear();
-		int i = -1;
-		for (Item item : client.getItemContainer(InventoryID.EQUIPMENT.getId()).getItems()) {
-			i++;
-			if (item == null) {
-				continue;
-			}
-			if (item.getId() == 6512 || item.getId() == -1) {
-				continue;
-			}
-			int map = 27;
-			try{
-				map = equipmentSlotWidgetMapping.get(i);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				System.out.println("Unmapped Equipment Change, expected behavior at BA/SW");
-			}
-
-			Widget w = client.getWidget(WidgetInfo.EQUIPMENT.getGroupId(), map);
-			if (w == null || w.getActions() == null) {
-				continue;
-			}
-			equipment.add(new EquipmentItemWidget(w.getName(), item.getId(), w.getId(), -1, w.getActions()));
-		}
-    }
-
-
-    public static boolean hasItems(String ...names) {
-        for (String name : names) {
-            if (!hasItem(name)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static boolean hasItem(int id) {
-        return Equipment.search().withId(id).first().isPresent();
-    }
-    public static boolean hasItem(String name) {
-        return Equipment.search().nameContainsNoCase(name).first().isPresent();
-    }
-
-    @SneakyThrows
-    @Subscribe
-    public void onItemContainerChanged(ItemContainerChanged e) {
-        if (e.getContainerId() == InventoryID.EQUIPMENT.getId()) {
+        if (lastUpdateTick < client.getTickCount()) {
             int x = 25362447;
             for (int i = 0; i < 11; i++) {
                 client.runScript(545, (x + i), mappingToIterableIntegers.get(i), 1, 1, 2);
             }
             equipment.clear();
             int i = -1;
-            for (Item item : e.getItemContainer().getItems()) {
+            if(client.getItemContainer(InventoryID.EQUIPMENT.getId()) == null){
+                return new EquipmentItemQuery(equipment);
+            }
+            for (Item item : client.getItemContainer(InventoryID.EQUIPMENT.getId()).getItems()) {
                 i++;
                 if (item == null) {
                     continue;
@@ -119,21 +65,41 @@ public class Equipment {
                 if (item.getId() == 6512 || item.getId() == -1) {
                     continue;
                 }
-                int map = 27;
-                try{
-                    map = equipmentSlotWidgetMapping.get(i);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                   System.out.println("Unmapped Equipment Change, expected behavior at BA/SW");
-                }
-
-                Widget w = client.getWidget(WidgetInfo.EQUIPMENT.getGroupId(), map);
+                Widget w = client.getWidget(WidgetInfo.EQUIPMENT.getGroupId(), equipmentSlotWidgetMapping.get(i));
                 if (w == null || w.getActions() == null) {
                     continue;
                 }
                 equipment.add(new EquipmentItemWidget(w.getName(), item.getId(), w.getId(), -1, w.getActions()));
             }
+            lastUpdateTick = client.getTickCount();
         }
+        return new EquipmentItemQuery(equipment);
     }
-}
 
+//    @SneakyThrows
+//    @Subscribe
+//    public void onItemContainerChanged(ItemContainerChanged e) {
+//        if (e.getContainerId() == InventoryID.EQUIPMENT.getId()) {
+//            int x = 25362447;
+//            for (int i = 0; i < 11; i++) {
+//                client.runScript(545, (x + i), mappingToIterableIntegers.get(i), 1, 1, 2);
+//            }
+//            equipment.clear();
+//            int i = -1;
+//            for (Item item : e.getItemContainer().getItems()) {
+//                i++;
+//                if (item == null) {
+//                    continue;
+//                }
+//                if (item.getId() == 6512 || item.getId() == -1) {
+//                    continue;
+//                }
+//                Widget w = client.getWidget(WidgetInfo.EQUIPMENT.getGroupId(), equipmentSlotWidgetMapping.get(i));
+//                if (w == null || w.getActions() == null) {
+//                    continue;
+//                }
+//                equipment.add(new EquipmentItemWidget(w.getName(), item.getId(), w.getId(), i, w.getActions()));
+//            }
+//        }
+//    }
+}
