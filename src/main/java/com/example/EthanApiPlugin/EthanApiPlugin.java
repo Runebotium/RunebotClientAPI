@@ -3,6 +3,7 @@ package com.example.EthanApiPlugin;
 import com.example.EthanApiPlugin.Collections.*;
 import com.example.EthanApiPlugin.Collections.query.QuickPrayer;
 import com.example.EthanApiPlugin.PathFinding.Node;
+import com.example.PacketUtils.ObfuscatedNames;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -105,7 +106,7 @@ public class EthanApiPlugin extends Plugin {
     public static SkullIcon getSkullIcon(Player player) {
         Field skullField = null;
         try {
-            skullField = player.getClass().getDeclaredField("ag");
+            skullField = player.getClass().getDeclaredField(ObfuscatedNames.skullIconField);
             skullField.setAccessible(true);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class EthanApiPlugin extends Plugin {
         }
         int var1 = -1;
         try {
-            var1 = skullField.getInt(player) * -227316761;
+            var1 = skullField.getInt(player) * ObfuscatedNames.skullIconMultiplier;
             skullField.setAccessible(false);
         } catch (IllegalAccessException | NullPointerException e) {
             e.printStackTrace();
@@ -175,7 +176,7 @@ public class EthanApiPlugin extends Plugin {
                 }
                 int value = declaredField.getInt(npc);
                 declaredField.setInt(npc, 4795789);
-                if (npc.getAnimation() == -614178723 * 4795789) {
+                if (npc.getAnimation() == ObfuscatedNames.getAnimationMultiplier * 4795789) {
                     animationField = declaredField.getName();
                     declaredField.setInt(npc, value);
                     declaredField.setAccessible(false);
@@ -190,7 +191,7 @@ public class EthanApiPlugin extends Plugin {
         }
         Field animation = npc.getClass().getSuperclass().getDeclaredField(animationField);
         animation.setAccessible(true);
-        int anim = animation.getInt(npc) * 2002995319;
+        int anim = animation.getInt(npc) * ObfuscatedNames.getAnimationMultiplier;
         animation.setAccessible(false);
         return anim;
     }
@@ -216,18 +217,49 @@ public class EthanApiPlugin extends Plugin {
 
     @SneakyThrows
     public static HeadIcon getHeadIcon(NPC npc) {
+        Field vi = npc.getClass().getDeclaredField("ap");
+        vi.setAccessible(true);
+        Object viObj = vi.get(npc);
+        if(viObj==null){
+            vi.setAccessible(false);
+            return getOldHeadIcon(npc);
+        }
+        Field adField = viObj.getClass().getDeclaredField("ad");
+        adField.setAccessible(true);
+        short[] ad = (short[]) adField.get(viObj);
+        adField.setAccessible(false);
+        vi.setAccessible(false);
+        if(ad==null){
+            return getOldHeadIcon(npc);
+        }
+        if(ad.length==0){
+            return getOldHeadIcon(npc);
+        }
+        short headIcon  = ad[0];
+        if(headIcon==-1){
+            return getOldHeadIcon(npc);
+        }
+        return HeadIcon.values()[headIcon];
+    }
+
+    @SneakyThrows
+    public static HeadIcon getOldHeadIcon(NPC npc){
         Method getHeadIconMethod = null;
         for (Method declaredMethod : npc.getComposition().getClass().getDeclaredMethods()) {
             if (declaredMethod.getName().length() == 2 && declaredMethod.getReturnType() == short.class && declaredMethod.getParameterCount() == 1) {
                 getHeadIconMethod = declaredMethod;
                 getHeadIconMethod.setAccessible(true);
-                short headIcon = (short) getHeadIconMethod.invoke(npc.getComposition(), 0);
+                short headIcon = -1;
+                try {
+                    headIcon = (short) getHeadIconMethod.invoke(npc.getComposition(), 0);
+                }catch (Exception e){
+                    //nothing
+                }
                 getHeadIconMethod.setAccessible(false);
 
                 if (headIcon == -1) {
                     continue;
                 }
-
                 return HeadIcon.values()[headIcon];
             }
         }

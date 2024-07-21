@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-def RuneBotClientAPIVersion = '0.1.40'
+def RuneBotClientAPIVersion = '0.1.41'
 
 publishing {
     publications {
@@ -39,9 +39,10 @@ repositories {
         url = 'https://repo.runelite.net'
     }
     mavenCentral()
+    jcenter()
 }
 
-def runeLiteVersion = '1.10.34-SNAPSHOT'
+def runeLiteVersion = '1.10.35'
 
 dependencies {
     compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
@@ -55,6 +56,9 @@ dependencies {
     implementation 'org.benf:cfr:0.151'
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    // https://mvnrepository.com/artifact/com.google.archivepatcher/archive-patch-applier
+    implementation("com.google.archivepatcher:archive-patch-applier:1.0.4")
+
 }
 
 sourceSets {
