@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-def RuneBotClientAPIVersion = '0.2.2'
+def RuneBotClientAPIVersion = '0.2.3'
 
 publishing {
     publications {
