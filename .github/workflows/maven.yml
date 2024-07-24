@@ -78,7 +78,7 @@ jobs:
       - name: Trigger Action in Another Repository
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.REPO_2 }}  # Personal access token with repo scope
+          token: ${{ secrets.REPO_TOKEN }}  # Personal access token with repo scope
           repository: Runebotium/RunebotFreePlugins     # Owner and repository name of the target repository
           event-type: trigger-action
           client-payload: '{"version": "${{ env.VERSION }}"}'
