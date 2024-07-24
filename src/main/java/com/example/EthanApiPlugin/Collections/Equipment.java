@@ -32,7 +32,6 @@ public class Equipment {
         equipmentSlotWidgetMapping.put(12, 24);
         equipmentSlotWidgetMapping.put(13, 25);
 
-
         mappingToIterableIntegers.put(0, 0);
         mappingToIterableIntegers.put(1, 1);
         mappingToIterableIntegers.put(2, 2);
@@ -75,31 +74,4 @@ public class Equipment {
         }
         return new EquipmentItemQuery(equipment);
     }
-
-//    @SneakyThrows
-//    @Subscribe
-//    public void onItemContainerChanged(ItemContainerChanged e) {
-//        if (e.getContainerId() == InventoryID.EQUIPMENT.getId()) {
-//            int x = 25362447;
-//            for (int i = 0; i < 11; i++) {
-//                client.runScript(545, (x + i), mappingToIterableIntegers.get(i), 1, 1, 2);
-//            }
-//            equipment.clear();
-//            int i = -1;
-//            for (Item item : e.getItemContainer().getItems()) {
-//                i++;
-//                if (item == null) {
-//                    continue;
-//                }
-//                if (item.getId() == 6512 || item.getId() == -1) {
-//                    continue;
-//                }
-//                Widget w = client.getWidget(WidgetInfo.EQUIPMENT.getGroupId(), equipmentSlotWidgetMapping.get(i));
-//                if (w == null || w.getActions() == null) {
-//                    continue;
-//                }
-//                equipment.add(new EquipmentItemWidget(w.getName(), item.getId(), w.getId(), i, w.getActions()));
-//            }
-//        }
-//    }
 }
